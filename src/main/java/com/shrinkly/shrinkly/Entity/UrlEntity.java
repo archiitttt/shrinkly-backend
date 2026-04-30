@@ -8,12 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Getter
+@Setter
 public class UrlEntity {
 
     @Id
@@ -21,6 +23,6 @@ public class UrlEntity {
     private long id;
     private String originalUrl;
     private String shortCode;
-    private boolean isActive;
+    private boolean active;
 
 }

@@ -28,7 +28,7 @@ public class URLService {
 
     public CreateUrlResponse saveUrl(String originalUrl){
 
-        Optional<UrlEntity> existing = urlRepo.findByOriginalUrl(originalUrl);
+        Optional<UrlEntity> existing = urlRepo.findByOriginalUrlAndActiveTrue(originalUrl);
         if(existing.isPresent()){
             UrlEntity urlEntity = existing.get();
             String shortUrl = appProperties.getDomain() + "/" + urlEntity.getShortCode();
@@ -41,7 +41,7 @@ public class URLService {
         UrlEntity entity = UrlEntity.builder()
                 .originalUrl(originalUrl)
                 .shortCode(shortCode)
-                .isActive(true)
+                .active(true)
                 .build();
 
         urlRepo.save(entity);
@@ -50,11 +50,23 @@ public class URLService {
 
     public String redirectToOriginalUrl(String shortCode){
 
-        Optional<UrlEntity> existing = urlRepo.findByShortCode(shortCode);
+        Optional<UrlEntity> existing = urlRepo.findByShortCodeAndActiveTrue(shortCode);
 
         if(existing.isEmpty()) throw new ShortUrlNotFoundException("Short URL not found.");
 
         return existing.get().getOriginalUrl();
+
+    }
+
+    public void deleteShortUrl(String originalUrl){
+
+        Optional<UrlEntity> existing = urlRepo.findByOriginalUrlAndActiveTrue(originalUrl);
+
+        if(existing.isEmpty()) throw new ShortUrlNotFoundException("No Short URL exists for this URL.");
+
+        UrlEntity urlEntity = existing.get();
+        urlEntity.setActive(false);
+        urlRepo.save(urlEntity);
 
     }
 
